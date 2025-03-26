@@ -8,7 +8,6 @@ import io.cucumber.junit.CucumberOptions;
 @CucumberOptions(
         features = "src/test/java/features",
         glue = "steps",
-        plugin = {"pretty", "html:target/cucumber-report.html"},
         monochrome = true
 )
 public class TestRunner {
