@@ -9,6 +9,8 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 public class basketStepDefs {
@@ -18,15 +20,19 @@ public class basketStepDefs {
 //    here we start open webbrowser
     @Given("I open the browser {string}")
     public void i_open_the_browser(String browser) {
+
         if (browser.equalsIgnoreCase("chrome")) {
             WebDriverManager.chromedriver().setup();
             driver = new ChromeDriver();
+
         } else if (browser.equalsIgnoreCase("firefox")) {
             WebDriverManager.firefoxdriver().setup();
             driver = new FirefoxDriver();
+
         } else {
             throw new RuntimeException("Unsupported browser: " + browser);
         }
+
         driver.manage().window().maximize();
     }
 
@@ -63,7 +69,7 @@ public class basketStepDefs {
         confirmField.sendKeys(confirmPassword);
     }
 
-//    I had a bit short problem with this but after when I watched Stefan's video about isSelected and solved until last!
+//    I had a bit short problem with checkbox but after when I watched Stefan's video about isSelected and solved until last!
     @And("I agree to the terms and conditions")
     public void i_agree_terms() {
         WebElement checkbox = driver.findElement(By.cssSelector("#sign_up_25"));
@@ -92,28 +98,27 @@ public class basketStepDefs {
     public void i_submit_form() {
         WebElement submit = driver.findElement(By.name("join"));
         assertTrue("Submit button should be enabled", submit.isEnabled());
+
         submit.click();
     }
 
-    @Then("I click the button with text {string}")
-    public void i_click_button_with_text(String buttonText) {
-        WebElement confirmButton = driver.findElement(By.xpath("//button[contains(text(),'" + buttonText + "')]"));
-        assertTrue("Button should be visible", confirmButton.isDisplayed());
-        confirmButton.click();
-        driver.quit();
+
+    @Then("I get access to membership page")
+    public void i_access_the_membership_page() {
+        String currentUrl = driver.getCurrentUrl();
+        assertTrue("Should be on membership page", currentUrl.contains("/Account"));
     }
 
-    @Then("I should see an error message saying {string}")
+
+    @Then("I should see an error message that describes with text {string}")
     public void i_should_see_error_message(String expectedMessage) {
-        WebElement errorBox = driver.findElement(By.className("field-validation-error"));
+        WebElement errorBox = driver.findElement(By.cssSelector(".field-validation-error"));
         String actualMessage = errorBox.getText().trim();
         assertEquals(expectedMessage, actualMessage);
+//        System.out.println(actualMessage);
         driver.quit();
     }
 
-    // Utility: Wait for visible element
-    private WebElement waitForElement(By locator) {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
-    }
+
+
 }
